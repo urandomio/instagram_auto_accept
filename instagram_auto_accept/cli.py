@@ -1,15 +1,78 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+Usage:
+    instagram_auto_accept [options]
 
-import click
+Options:
+    -h, --help                  Show this help screen.
+    -s, --sleep=<interval>		How long to sleep between polling default 60 seconds
+    -t, --throttle=<interval>	How long to sleep betwen accepts
+    -u, --username=<username>   Instagram Username
+    -p, --password=<password>   Instagram Password
+    -v, --version               Print version
+
+Simple utility to auto accept Follow Requests on an Instagram account.
+
+"""
+import time
+from getpass import getpass
+from InstagramAPI import InstagramAPI
+from docopt import docopt
+from sys import exit
+import signal
 
 
-@click.command()
+def signal_handler(signal, frame):
+    print('Exiting')
+    exit(0)
+
+def prompt_for_username():
+	return raw_input('Instagram Username/E-Mail address: ')
+
+def prompt_for_password():
+	return getpass('Instagram Password: ')
+
 def main(args=None):
-    """Console script for instagram_auto_accept"""
-    click.echo("Replace this message by putting your code into "
-               "instagram_auto_accept.cli.main")
-    click.echo("See click documentation at http://click.pocoo.org/")
+	signal.signal(signal.SIGINT, signal_handler)
+	# Parse arguments
+	(user, password, sleep, throttle) = (
+		arguments['--username'], arguments['--password'],
+		arguments['--sleep'], arguments['--throttle']
+	)
+	if not user:
+		user = prompt_for_username()
+	if not password:
+		password = prompt_for_password()
+	if not sleep:
+		sleep = 60
+	if not throttle:
+		throttle = 1
+	# Connect to IG	
+	API = InstagramAPI(user, password)
+	try:
+		logged_in = API.login()
+		response = API.LastJson
+		if not logged_in:
+			print(response['message'])
+			exit(1)
+	except Exception as e:
+		print('Error Logging in: %s ' % (e))
+		exit(1)
 
+	while True:
+	    API.getPendingFollowRequests()
+	    pending = API.LastJson
+	    for user in pending['users']:
+	    	user_name = user['username']
+	    	user_id = user['pk']
+	    	print('Approving Follow Request for: %s' % (user_name))
+	    	API.approve(user_id)
+	    	time.sleep(float(throttle))
+	    time.sleep(float(sleep))
 
-if __name__ == "__main__":
+    
+
+if __name__ == '__main__':
+    arguments = docopt(__doc__, version='0.1.0')
     main()

@@ -10,12 +10,16 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'Click>=6.0',
+    'docopt',
     # TODO: put package requirements here
 ]
 
 test_requirements = [
     # TODO: put package test requirements here
+]
+
+github_dependencies = [
+    'git+https://github.com/jamesbrink/Instagram-API-python.git#egg=InstagramAPI'
 ]
 
 setup(
@@ -29,6 +33,7 @@ setup(
     packages=[
         'instagram_auto_accept',
     ],
+    dependency_links=github_dependencies,
     package_dir={'instagram_auto_accept':
                  'instagram_auto_accept'},
     entry_points={
