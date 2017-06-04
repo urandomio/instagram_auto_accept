@@ -11,6 +11,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'docopt',
+    'instagram-api'
     # TODO: put package requirements here
 ]
 
@@ -19,7 +20,7 @@ test_requirements = [
 ]
 
 github_dependencies = [
-    'git+https://github.com/jamesbrink/Instagram-API-python.git#egg=InstagramAPI'
+    'git+https://github.com/urandomio/Instagram-API-python.git'
 ]
 
 setup(
@@ -36,11 +37,6 @@ setup(
     dependency_links=github_dependencies,
     package_dir={'instagram_auto_accept':
                  'instagram_auto_accept'},
-    entry_points={
-        'console_scripts': [
-            'instagram_auto_accept=instagram_auto_accept.cli:main'
-        ]
-    },
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",
@@ -59,6 +55,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
+    scripts=['scripts/instagram_auto_accept', ],
     test_suite='tests',
     tests_require=test_requirements
 )
